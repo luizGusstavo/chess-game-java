@@ -35,4 +35,10 @@ public class Board {
 		// RETORNA UMA PECA EM DETERMINADA POSICAO
 		return pieces[position.getRow()][position.getColumn()]; 
 	}
+	
+	public void placePiece(Piece piece, Position position) {
+		// DENTRO DA MINHA MATRIZ DE PECAS, EU ADICIONO UMA PECA NA DETERMINADA POSICAO
+		pieces[position.getRow()][position.getColumn()] = piece;
+		piece.position = position; // RETORNO A POSICAO ONDE A PECA FOI ADICIONADA
+	}
 }
