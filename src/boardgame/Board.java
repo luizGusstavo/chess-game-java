@@ -26,4 +26,13 @@ public class Board {
 	public void setColumns(int columns) {
 		this.columns = columns;
 	}
+	
+	public Piece piece(int row, int column) {
+		return pieces[row][column]; // RETORNA UMA MATRIZ DE PESSAS EM DETERMINADA LINHA E COLUNA
+	}
+	
+	public Piece piece(Position position) {
+		// RETORNA UMA PECA EM DETERMINADA POSICAO
+		return pieces[position.getRow()][position.getColumn()]; 
+	}
 }
