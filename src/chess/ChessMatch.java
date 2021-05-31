@@ -28,6 +28,12 @@ public class ChessMatch {
 		return mat;	
 	}
 	
+	public boolean[][] possibleMoves(ChessPosition sourcePosition) {
+		Position position = sourcePosition.toPosition();
+		validateSourcePosition(position);
+		return board.piece(position).possibleMoves();
+	}
+	
 	// SOURCE - LOCAL DE ORIGEM DA PECA
 	// TARGET - LUGAR DE DESTINO DA PECA
 	public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
