@@ -1,6 +1,8 @@
 package chess;
 
 import boardgame.Board;
+import boardgame.Piece;
+import boardgame.Position;
 import chess.pieces.King;
 import chess.pieces.Rook;
 
@@ -23,8 +25,36 @@ public class ChessMatch {
 				mat[i][j] = (ChessPiece) board.piece(i, j);
 			}
 		}
-		return mat;
-	}private void placeNewPiece(char column, int row, ChessPiece piece) {
+		return mat;	
+	}
+	
+	// SOURCE - LOCAL DE ORIGEM DA PECA
+	// TARGET - LUGAR DE DESTINO DA PECA
+	public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
+		Position source = sourcePosition.toPosition(); // converte uma posicao em xadrez para matriz, com o metodo toPosition
+		Position target = targetPosition.toPosition();
+		
+		validateSourcePosition(source); // VERIFICA SE EXISTE UMA PECA NO LOGAL DE ORIGEM
+		
+		Piece capturedPiece = makeMove(source, target);
+		
+		return (ChessPiece) capturedPiece;
+	}
+	
+	private Piece makeMove(Position source, Position target) {
+		Piece p = board.removePiece(source); // CAPTURA A PECA DO LOCAL DE ORIGEM
+		Piece capturedPiece = board.removePiece(target); // CAPTURA A PECA DO LOCAL DE DESTINO (SE HOUVER PECA)
+		board.placePiece(p, target); // COLOCA A PECA P NO LOCAL DE DESTINO
+		return capturedPiece; // RETORNA A PECA QUE FOI CAPTURADA ( SE HOUVER)
+	}
+	
+	private void validateSourcePosition(Position position) {
+		if(!board.thereIsAPiece(position)) { // SE NAO EXISTIR UMA PECA NESSA POSICAO
+			throw new ChessException("There is no piece on source position.");
+		}
+	}
+	
+	private void placeNewPiece(char column, int row, ChessPiece piece) {
 		//RECEBE A POSICAO EM FORMA DE XADREZ
 		//DECLARA A PECA NA POSICAO INFORMADA
 		board.placePiece(piece, new ChessPosition(column, row).toPosition());

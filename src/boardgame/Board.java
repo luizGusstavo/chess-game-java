@@ -47,6 +47,19 @@ public class Board {
 		piece.position = position; // RETORNO A POSICAO ONDE A PECA FOI ADICIONADA
 	}
 	
+	public Piece removePiece(Position position){
+		if(!positionExists(position)) {
+			throw new BoardException("Position not on the board.");
+		}
+		if(piece(position) == null) { // SE A POSICAO FOR NULL, N EXISTE PECA PARA SER REMOVIDA
+			return null;
+		}
+		Piece aux = piece(position); // PEGA A PECA E ARMAZENA NA VARIAVEL AUX
+		aux.position = null; // A POSICAO QUE FOI PASSADA FICA NULA
+		pieces[position.getRow()][position.getColumn()] = null; // EU DECLARO QUE A POSICAO DA MATRIZ TBM FICA NULA
+		return aux;	// RETORNO A POSICAO ANULADA
+	}
+	
 	private boolean positionExists(int row, int column) {
 		// METODO AUXILIAR PARA VER SE A POSICAO EXISTE
 		return row >= 0 && row < rows && column >= 0 && column < columns;
