@@ -38,6 +38,7 @@ public class ChessMatch {
 		
 		Piece capturedPiece = makeMove(source, target);
 		
+		// RETORNA A PECA CAPTURADA EM FORMATO DE PECA DE XADREZ
 		return (ChessPiece) capturedPiece;
 	}
 	
