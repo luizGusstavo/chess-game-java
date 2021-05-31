@@ -9,10 +9,22 @@ import chess.pieces.Rook;
 public class ChessMatch {
 	
 	private Board board;
+	private int turn;
+	private Color currentPlayer;
 	
 	public ChessMatch() {
 		board = new Board(8, 8); // INICIA UM TABULEIRO
+		turn = 1;
+		currentPlayer = Color.WHITE;
 		initialSetup(); // FUNCAO RESPONSAVEL POR INICIAR A PARTIDA DE XADREZ
+	}
+	
+	public int getTurn() {
+		return turn;
+	}
+	
+	public Color getCurrentPlayer() {
+		return currentPlayer;
 	}
 	
 	// ELE PEGA PECAS DE CHADREZ (CHESSPIECES) E N UMA PECA QUALQUER
@@ -44,7 +56,7 @@ public class ChessMatch {
 		validateTargetPosition(source, target);
 		
 		Piece capturedPiece = makeMove(source, target);
-		
+		nextTurn();
 		// RETORNA A PECA CAPTURADA EM FORMATO DE PECA DE XADREZ
 		return (ChessPiece) capturedPiece;
 	}
@@ -60,6 +72,9 @@ public class ChessMatch {
 		if(!board.thereIsAPiece(position)) { // SE NAO EXISTIR UMA PECA NESSA POSICAO
 			throw new ChessException("There is no piece on source position.");
 		}
+		if(currentPlayer != ((ChessPiece)board.piece(position)).getColor()) { // SE A PECA N FOR DA COR COLETADA
+			throw new ChessException("The chosen piece is not yours.");
+		}
 		if(!board.piece(position).isThereAnyPossibleMove()) {
 			throw new ChessException("There is no possible moves for the chosen piece.");
 		}
@@ -71,11 +86,17 @@ public class ChessMatch {
 		}
 	}
 	
+	private void nextTurn() {
+		turn++;
+		//SE MEU JOGADOR FOR A PECA BRANCA, TROCA PRA PECA PRETA, SE N FOR, TROCA PRA BRANCA
+		currentPlayer = (currentPlayer == Color.WHITE ? Color.BLACK : Color.WHITE);
+	}
+	
 	private void placeNewPiece(char column, int row, ChessPiece piece) {
 		//RECEBE A POSICAO EM FORMA DE XADREZ
 		//DECLARA A PECA NA POSICAO INFORMADA
 		board.placePiece(piece, new ChessPosition(column, row).toPosition());
-	}
+	}	
 	
 	//RESPONSAVEL POR INICIAR A PARTIDA DE XADREZ
 	private void initialSetup() {
