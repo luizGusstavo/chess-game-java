@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
@@ -11,6 +14,9 @@ public class ChessMatch {
 	private Board board;
 	private int turn;
 	private Color currentPlayer;
+	
+	private List<Piece> piecesOnTheBoard = new ArrayList<>();
+	private List<Piece> capturedPieces = new ArrayList<>();
 	
 	public ChessMatch() {
 		board = new Board(8, 8); // INICIA UM TABULEIRO
@@ -65,6 +71,12 @@ public class ChessMatch {
 		Piece p = board.removePiece(source); // CAPTURA A PECA DO LOCAL DE ORIGEM
 		Piece capturedPiece = board.removePiece(target); // CAPTURA A PECA DO LOCAL DE DESTINO (SE HOUVER PECA)
 		board.placePiece(p, target); // COLOCA A PECA P NO LOCAL DE DESTINO
+		
+		if(capturedPiece != null) {
+			piecesOnTheBoard.remove(capturedPiece);
+			capturedPieces.add(capturedPiece);
+		}
+
 		return capturedPiece; // RETORNA A PECA QUE FOI CAPTURADA ( SE HOUVER)
 	}
 	
@@ -96,6 +108,7 @@ public class ChessMatch {
 		//RECEBE A POSICAO EM FORMA DE XADREZ
 		//DECLARA A PECA NA POSICAO INFORMADA
 		board.placePiece(piece, new ChessPosition(column, row).toPosition());
+		piecesOnTheBoard.add(piece);
 	}	
 	
 	//RESPONSAVEL POR INICIAR A PARTIDA DE XADREZ
