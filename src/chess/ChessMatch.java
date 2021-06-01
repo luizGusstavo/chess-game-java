@@ -16,6 +16,7 @@ public class ChessMatch {
 	private int turn;
 	private Color currentPlayer;
 	private boolean check;
+	private boolean checkMate;
 	
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();
 	private List<Piece> capturedPieces = new ArrayList<>();
@@ -33,6 +34,10 @@ public class ChessMatch {
 	
 	public boolean getCheck() {
 		return check;
+	}
+	
+	public boolean getCheckMate() {
+		return checkMate;
 	}
 	
 	public Color getCurrentPlayer() {
@@ -76,7 +81,13 @@ public class ChessMatch {
 		
 		check = (testCheck(opponent(currentPlayer))) ? true : false;
 		
-		nextTurn();
+		if(testCheckMate(opponent(currentPlayer))) {
+			checkMate = true;
+		}
+		else {
+			nextTurn();
+		}
+		
 		// RETORNA A PECA CAPTURADA EM FORMATO DE PECA DE XADREZ
 		return (ChessPiece) capturedPiece;
 	}
@@ -133,6 +144,7 @@ public class ChessMatch {
 		return (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
 	}
 	
+	//PROCURA O REI NO TABULEIRO
 	private ChessPiece king(Color color) {
 		List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color).collect(Collectors.toList()); 
 			for(Piece p : list) {
@@ -155,6 +167,31 @@ public class ChessMatch {
 		return false;
 	}
 	
+	private boolean testCheckMate(Color color) {
+		if(!testCheck(color)) {
+			return false;
+		}
+		List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color).collect(Collectors.toList());
+			for(Piece p : list) {
+				boolean[][] mat = p.possibleMoves(); // INSTANCIA UMA MATRIZ COM OS MOVIMENTOS POSSIVEIS
+					for(int i = 0; i < board.getRows(); i++) { // PERCORRE AS LINHAS DA MATRIZ
+						for(int j = 0; j < board.getColumns(); j++) { // PERCORRE AS COLUNAS DA MATRIZ
+							if(mat[i][j]) { 
+								Position source = ((ChessPiece)p).getChessPosition().toPosition(); // CAPTURA A PECA DA POSICAO DE ORIGEM, PARA SIMULAR O MOVIMENTO
+								Position target = new Position(i, j); // DEFINI A POSICAO DE ORIGEM DA PECA CAPTURADA
+								Piece capturedPiece = makeMove(source, target); // REALIZA O MOVIMENTO
+								boolean testCheck = testCheck(color); // TESTA SE CONTINOU EM CHECK
+								undoMove(source, target, capturedPiece); // DESFAZ O MOVIMENTO
+									if(!testCheck) {
+										return false;
+									}
+							}
+						}
+					}
+			}
+		return true;
+	}
+	
 	private void placeNewPiece(char column, int row, ChessPiece piece) {
 		//RECEBE A POSICAO EM FORMA DE XADREZ
 		//DECLARA A PECA NA POSICAO INFORMADA
@@ -165,18 +202,11 @@ public class ChessMatch {
 	//RESPONSAVEL POR INICIAR A PARTIDA DE XADREZ
 	private void initialSetup() {
 		
-		placeNewPiece('c', 1, new Rook(board, Color.WHITE)); // COLOCA NA POSICAO c1 UMA TORRE BRANCA
-        placeNewPiece('c', 2, new Rook(board, Color.WHITE));
-        placeNewPiece('d', 2, new Rook(board, Color.WHITE));
-        placeNewPiece('e', 2, new Rook(board, Color.WHITE));
-        placeNewPiece('e', 1, new Rook(board, Color.WHITE));
-        placeNewPiece('d', 1, new King(board, Color.WHITE));
-
-        placeNewPiece('c', 7, new Rook(board, Color.BLACK));
-        placeNewPiece('c', 8, new Rook(board, Color.BLACK));
-        placeNewPiece('d', 7, new Rook(board, Color.BLACK));
-        placeNewPiece('e', 7, new Rook(board, Color.BLACK));
-        placeNewPiece('e', 8, new Rook(board, Color.BLACK));
-        placeNewPiece('d', 8, new King(board, Color.BLACK));
+		placeNewPiece('h', 7, new Rook(board, Color.WHITE)); // COLOCA NA POSICAO c1 UMA TORRE BRANCA
+        placeNewPiece('d', 1, new Rook(board, Color.WHITE));
+        placeNewPiece('e', 1, new King(board, Color.WHITE));
+     
+        placeNewPiece('b', 8, new Rook(board, Color.BLACK));
+        placeNewPiece('a', 8, new King(board, Color.BLACK));
 	}
 }
